@@ -139,7 +139,7 @@ Prereq: your Vault CLI context is already configured (`VAULT_ADDR`, `VAULT_TOKEN
 > 📈 Best when you want metric-backed inventory and have telemetry endpoint access.
 
 - Static secrets: metrics endpoint
-- Dynamic secrets: metrics-pattern aggregation
+- Dynamic secrets: metrics-pattern aggregation only when Vault exposes matching dynamic-role metrics
 - Certificates: audit-log duration units
 - SSH and ADP: audit-log derived
 
@@ -147,6 +147,7 @@ Prometheus prerequisite:
 
 - Vault must expose `/v1/sys/metrics?format=prometheus`
 - In many environments this is not enabled by default until telemetry/access settings are configured
+- Some environments do not emit dynamic-role metrics for database or other dynamic backends; in that case Prometheus mode can still report `0` even when dynamic secret issuance works.
 
 Metrics endpoint behavior:
 
@@ -177,6 +178,7 @@ This is the most reliable mode for dynamic secret counts.
 - Use `--insecure` only when you intentionally need to skip TLS validation.
 - This report is not strict real-time telemetry.
 - Utilization mode reflects the latest snapshot, not a live stream.
+- Prometheus mode can under-report dynamic secrets if Vault does not publish the matching dynamic-role metric family.
 - Audit-derived values depend on the events present in the audit file you provide.
 
 Certificate unit math:
