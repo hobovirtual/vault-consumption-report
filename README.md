@@ -208,7 +208,7 @@ The report always uses the audit log for certificates, SSH, and ADP.
 > 🧩 Best when your Vault CLI context is already configured and you want direct static inventory from Vault.
 
 - Static secrets: Vault CLI inventory
-- Dynamic secrets: reported as `0`
+- Dynamic secrets: not available
 - Certificates: audit-log duration units
 - SSH and ADP: audit-log derived
 
@@ -219,7 +219,7 @@ Prereq: your Vault CLI context is already configured (`VAULT_ADDR`, `VAULT_TOKEN
 > 📈 Best when you want metric-backed inventory and have telemetry endpoint access.
 
 - Static secrets: metrics endpoint
-- Dynamic secrets: metrics-pattern aggregation only when Vault exposes matching dynamic-role metrics
+- Dynamic secrets: not always available
 - Certificates: audit-log duration units
 - SSH and ADP: audit-log derived
 
@@ -244,6 +244,42 @@ Metrics endpoint behavior:
 - SSH and ADP: audit-log derived
 
 This is the most reliable mode for dynamic secret counts.
+
+---
+
+## Output Reference 📋
+
+The report always prints the same top-level sections, but what each value means depends on the selected mode.
+
+| Output | What it means | Manual | Prometheus | Utilization |
+|---|---|---|---|---|
+| `Static Secrets` | Count of KV/static secrets discovered for the selected namespaces | Vault CLI inventory | Metrics-based count | Utilization-backed count |
+| `Dynamic Secrets` | Count of dynamic secret roles/usages that Vault telemetry can attribute | Not available | Not available | Utilization snapshot count |
+| `Certificates` | Audit-derived certificate units grouped by validity/TTL | Available | Available | Available |
+| `SSH Credentials` | Audit-derived count of SSH signing operations | Available | Available | Available |
+| `Advanced Data Protection` | Audit-derived count of transit/transform/gcpkms operations | Available | Available | Available |
+| `Report Summary` | Metadata about mode, section selection, namespace scope, and data source | Available | Available | Available |
+| `Snapshot time` | Timestamp of the utilization snapshot used for inventory values | Not shown | Not shown | Available |
+
+### Verbose Fields
+
+When you use `--verbose`, the report adds certificate diagnostics:
+
+- `Audit events`: number of PKI issuance/sign/generate events found in the audit log
+- `Audit hours`: total certificate lifetime hours observed in the audit log
+- `Audit window start/end`: first and last qualifying PKI event timestamps in the provided audit log
+- `Certs 0-24h`, `Certs 25-720h`, `Certs >720h`: certificate event buckets by requested lifetime
+- `Utilization estimate` and `Accuracy note`: shown only in utilization mode when certificate estimate comparison data is available
+
+### JSON Output Notes
+
+When you use `--format json`:
+
+- The same report concepts are returned as machine-readable fields
+- `sections.selected` reflects your `--metrics` selection
+- `namespaces` reflects your namespace scope
+- `ttl_summary` contains certificate validity buckets as structured rows
+- `sign_counts_by_role` contains SSH signing counts grouped by namespace, mount, and role
 
 ---
 
