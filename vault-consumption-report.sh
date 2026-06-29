@@ -369,7 +369,15 @@ import sys
 with open(sys.argv[1], encoding="utf-8") as file_handle:
     bundle = json.load(file_handle)
 
-snapshot = bundle["snapshots"][-1]
+snapshots = bundle.get("snapshots")
+if snapshots:
+  snapshot = snapshots[-1]
+else:
+  snapshot_records = bundle.get("snapshot_records", [])
+  if not snapshot_records:
+    raise KeyError("snapshots")
+  snapshot = snapshot_records[-1].get("decoded_snapshot", snapshot_records[-1])
+
 metrics = snapshot["metrics"]
 
 dynamic_secrets = (
