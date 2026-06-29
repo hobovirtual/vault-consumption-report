@@ -1,6 +1,8 @@
 FROM debian:bookworm-slim
 
-ARG VAULT_VERSION=1.21.5
+ARG VAULT_VERSION=1.17.3
+# TARGETARCH is automatically set by the container build system (podman/docker)
+# based on your platform. This default is used only if not set by the builder.
 ARG TARGETARCH=amd64
 
 RUN apt-get update \

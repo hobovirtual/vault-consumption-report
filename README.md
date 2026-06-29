@@ -124,6 +124,37 @@ Notes:
 - For private or internal Vault endpoints, ensure container network access is allowed in your environment.
 - This repo includes both `Containerfile` and `Dockerfile`.
 
+### Multi-Architecture Support 🏗️
+
+The container image automatically detects and builds for the CPU architecture of your current machine. No manual configuration needed.
+
+**Native builds on each architecture:**
+
+```bash
+# On Mac (arm64), Linux ARM64, or Raspberry Pi
+podman build -t vault-consumption-report:local -f Containerfile .
+# Builds for arm64
+
+# On Linux x86_64 or Intel-based systems
+**How it works:**
+
+When you run `podman build` or `docker build`, the build system automatically detects your CPU architecture and sets the `TARGETARCH` build argument. The Containerfile then uses that value to download the matching Vault CLI binary. Each machine builds natively for its own CPU—no cross-compilation or emulation needed.
+# Builds for amd64
+```
+
+- `linux/amd64` (Intel, AMD, x86_64 64-bit)
+
+**Supported architectures:**
+
+- `linux/amd64` (Intel/AMD 64-bit)
+- `linux/arm64` (ARM 64-bit: Apple Silicon Macs, AWS Graviton, etc.)
+
+If you need to override the Vault version (for example to test a different release):
+
+```bash
+podman build --build-arg VAULT_VERSION=1.18.0 -t vault-consumption-report:local -f Containerfile .
+```
+
 ---
 
 ## Platform Support 🖥️
