@@ -3,6 +3,8 @@
 ![Platform Linux](https://img.shields.io/badge/Linux-Supported-2EA043?logo=linux&logoColor=white)
 ![Platform macOS](https://img.shields.io/badge/macOS-Supported-1F6FEB?logo=apple&logoColor=white)
 ![Platform Windows](https://img.shields.io/badge/Windows-Supported-0A66C2?logo=windows&logoColor=white)
+![Podman](https://img.shields.io/badge/Podman-Supported-892CA0?logo=podman&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Supported-2496ED?logo=docker&logoColor=white)
 ![Audit Log](https://img.shields.io/badge/Audit%20Log-Required-D1242F)
 ![Default Mode](https://img.shields.io/badge/Default%20Mode-Utilization-7A3FF2)
 ![TLS](https://img.shields.io/badge/TLS-Verify%20By%20Default-0E8A16)
@@ -43,6 +45,84 @@ If you want JSON output:
 ```bash
 ./vault-consumption-report.sh --audit-log /path/to/audit.log --format json
 ```
+
+## Containerized Runner 🐳
+
+If your environment restricts local installs (for example, no local `python3`), you can run the same report from a container image that already includes:
+
+- `bash`, `curl`, `grep`, `awk`, `python3`
+- Vault CLI
+
+### Build the image
+
+#### Podman
+
+```bash
+podman build -t vault-consumption-report:local -f Containerfile .
+```
+
+#### Docker
+
+```bash
+docker build -t vault-consumption-report:local .
+```
+
+### Run with an audit log mounted read-only
+
+#### Podman
+
+```bash
+podman run --rm \
+  -v "/path/to/audit-dir:/input:ro" \
+  vault-consumption-report:local \
+  --audit-log /input/audit.log --mode prometheus --insecure
+```
+
+#### Docker
+
+```bash
+docker run --rm \
+  -v "/path/to/audit-dir:/input:ro" \
+  vault-consumption-report:local \
+  --audit-log /input/audit.log --mode prometheus --insecure
+```
+
+### Run in manual/utilization mode
+
+Pass Vault CLI context into the container:
+
+#### Podman
+
+```bash
+podman run --rm \
+  -v "/path/to/audit-dir:/input:ro" \
+  -e VAULT_ADDR \
+  -e VAULT_TOKEN \
+  -e VAULT_NAMESPACE \
+  -e VAULT_SKIP_VERIFY \
+  vault-consumption-report:local \
+  --audit-log /input/audit.log --mode utilization --format json
+```
+
+#### Docker
+
+```bash
+docker run --rm \
+  -v "/path/to/audit-dir:/input:ro" \
+  -e VAULT_ADDR \
+  -e VAULT_TOKEN \
+  -e VAULT_NAMESPACE \
+  -e VAULT_SKIP_VERIFY \
+  vault-consumption-report:local \
+  --audit-log /input/audit.log --mode utilization --format json
+```
+
+Notes:
+
+- The container outputs the same table/JSON as local execution.
+- Your audit log path changes to the mounted path inside the container (for example `/input/audit.log`).
+- For private or internal Vault endpoints, ensure container network access is allowed in your environment.
+- This repo includes both `Containerfile` and `Dockerfile`.
 
 ---
 
