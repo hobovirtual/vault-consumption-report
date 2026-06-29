@@ -30,13 +30,27 @@ Usage: vault-consumption-report.sh [options]
 Produces a customer-facing Vault consumption report from audit logs, metrics, and utilization snapshots.
 Audit log input is required for every mode so certificate, SSH, and ADP counts stay accurate.
 
-Warnings:
+⚠️  IMPORTANT DISCLAIMERS:
 
-  Dynamic secrets are authoritative in utilization mode.
-  manual reports dynamic as 0; prometheus uses metric-pattern counts that may differ from utilization.
+  This report is a POINT-IN-TIME CAPTURE based on the audit log provided.
+  Peak usage and trends reflect only the time period covered by your audit log file,
+  not necessarily your entire billing period. Usage during periods not covered by
+  the audit log will not be detected.
 
-  Utilization and audit-log-derived sections are not real-time.
-  Values reflect the current utilization snapshot and events present in the provided audit log file.
+  Data Completeness:
+  - Ensure your audit log covers your full billing period or desired reporting window.
+  - Audit logs may have gaps due to rotation, retention policies, or Vault downtime.
+  - If audit logging was disabled or incomplete during any period, usage during that
+    time will not be reflected in this report.
+  - Some operations may not be captured if audit logging was not enabled for those paths.
+
+  Technical Limitations:
+  - Dynamic secrets are authoritative in utilization mode.
+    manual reports dynamic as 0; prometheus uses metric-pattern counts that may differ from utilization.
+  - Some Vault instances do not expose matching dynamic-role metrics in /sys/metrics,
+    so prometheus may still report 0 even when dynamic secret issuance is working.
+  - Utilization and audit-log-derived sections are not real-time.
+    Values reflect the current utilization snapshot and events present in the provided audit log file.
 
 Examples:
 

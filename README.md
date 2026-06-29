@@ -46,6 +46,30 @@ If you want JSON output:
 ./vault-consumption-report.sh --audit-log /path/to/audit.log --format json
 ```
 
+## ⚠️ Important Disclaimers
+
+**This report is a point-in-time capture based on the audit log file you provide.** Usage metrics, peak counts, and trends reflect only the time period covered by that audit log—not necessarily your entire billing period.
+
+### Data Completeness
+
+- **Audit log coverage:** Ensure your audit log file spans your complete billing period or desired reporting window. Peak usage and counts will only reflect what is captured in the provided audit log.
+- **Audit log gaps:** If audit logging was disabled, paused, rotated, or lost due to retention policies or Vault downtime, usage during those periods will not appear in the report.
+- **Hidden operations:** Any operations that occurred when audit logging was not active, or on paths that were excluded from audit logging, will not be detected or reported.
+- **Vault configuration changes:** If audit logging configuration changed during your reporting period (for example, audit log paths or retention), ensure all relevant logs are included.
+
+### What This Means for Your Report
+
+- The report shows consumption **within the audit log window only**.
+- If your billing period is 30 days but your audit log only covers 15 days, the report reflects only those 15 days.
+- Peak usage metrics may be incomplete if the peak occurred outside your audit log window.
+- Certificate counts, SSH operations, and ADP usage are derived entirely from audit log events; they will not include activity that is not logged.
+
+### Verification Tips
+
+- Check your audit log's timestamp range: `head -1 audit.log | jq .time` and `tail -1 audit.log | jq .time`
+- Confirm your Vault audit logging settings match your expectations: `vault audit list`
+- If you need a complete period, ensure you have all archived or rotated audit logs for that period.
+
 ## Containerized Runner 🐳
 
 If your environment restricts local installs (for example, no local `python3`), you can run the same report from a container image that already includes:
