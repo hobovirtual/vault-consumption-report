@@ -1064,6 +1064,7 @@ if [[ "$FORMAT" == "json" ]]; then
   fi
   printf '}\n'
 else
+  SUMMARY_LABEL_W=18
   LABEL_W=34
   VALUE_W=14
   TABLE_W=$((LABEL_W + VALUE_W + 1))
@@ -1096,15 +1097,18 @@ else
     printf '%-*s %*s\n' "$LABEL_W" "$1" "$VALUE_W" "$2"
   }
 
+  print_summary_row() {
+    printf '%-*s %s\n' "$SUMMARY_LABEL_W" "$1" "$2"
+  }
+
   print_section_title "Report Summary"
-  print_table_header "Field" "Value"
-  print_table_row "Mode" "$MODE"
-  print_table_row "Sections" "$SECTIONS"
-  print_table_row "Namespaces" "$namespace_scope_display"
-  print_table_row "Inventory source" "$metrics_source"
-  print_table_row "Audit log" "$AUDIT_LOG"
+  print_summary_row "Mode" "$MODE"
+  print_summary_row "Sections" "$SECTIONS"
+  print_summary_row "Namespaces" "$namespace_scope_display"
+  print_summary_row "Inventory source" "$metrics_source"
+  print_summary_row "Audit log" "$AUDIT_LOG"
   if [[ "$MODE" == "utilization" && -n "$snapshot_timestamp" ]]; then
-    print_table_row "Snapshot time" "$snapshot_timestamp"
+    print_summary_row "Snapshot time" "$snapshot_timestamp"
   fi
 
   if [[ "$show_static_section" == "true" ]]; then
