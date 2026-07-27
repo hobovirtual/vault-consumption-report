@@ -20,7 +20,8 @@ It is designed to be practical and fast to run during reporting, troubleshooting
 > [!NOTE]
 > **This script is intended for HashiCorp Vault clusters running version 1.21 or earlier.** 
 > 
-> For accurate consumption metrics, upgrading to Vault 2.0+ is recommended — 2.0+ provides native, deduplicated usage reporting out of the box. If an upgrade is not yet possible, or if you want an estimate of your consumption, this script can help you understand your current situation.
+> For accurate consumption metrics, upgrading to Vault 2.x+ is recommended
+> 2.0+ provides native resource units usage reporting out of the box. If an upgrade is not yet possible, or if you want an estimate of your consumption, this script can help you understand your current situation.
 
 > [!TIP]
 > Use `--mode utilization` when you need the most reliable dynamic secret counts.
@@ -32,7 +33,7 @@ It is designed to be practical and fast to run during reporting, troubleshooting
 > [!WARNING]
 > **Secret counts may be inflated in Performance Replication environments (pre-2.0 only).**
 > 
-> Pre-2.0 usage data sums secrets across all clusters — a secret that exists on both a primary and a PR secondary is counted once per cluster. If you are running multiple clusters with Performance Replication, the totals reported here may be higher than your actual consumption. Vault 2.0+ deduplicates secrets across the replication group; upgrading is recommended if this situation applies to your environment.
+> Pre 2.0 usage data sums secrets across all clusters, a secret that exists on both a primary and a PR secondary is counted once per cluster. If you are running multiple clusters with Performance Replication, the totals reported here may be higher than your actual consumption. Vault 2.x+ deduplicates secrets across the replication group; upgrading is recommended if this situation applies to your environment.
 
 ---
 
