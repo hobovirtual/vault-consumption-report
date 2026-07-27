@@ -9,13 +9,16 @@
 ![Default Mode](https://img.shields.io/badge/Default%20Mode-Utilization-7A3FF2)
 ![TLS](https://img.shields.io/badge/TLS-Verify%20By%20Default-0E8A16)
 
-This script builds a customer-facing Vault consumption report from:
+This script builds a Vault consumption report from:
 
 - Vault audit log events
 - Vault metrics endpoint (Prometheus format)
 - Vault utilization snapshots
 
-It is designed to be practical and fast to run during customer reporting, troubleshooting, and periodic checks.
+It is designed to be practical and fast to run during reporting, troubleshooting, and periodic checks.
+
+> [!NOTE]
+> **This script is intended for HashiCorp Vault clusters running version 1.21 or earlier.** For accurate consumption metrics, upgrading to Vault 2.0+ is recommended — 2.0+ provides native, deduplicated usage reporting out of the box. If an upgrade is not yet possible, or if you want an estimate of your consumption, this script can help you understand your current situation.
 
 > [!TIP]
 > Use `--mode utilization` when you need the most reliable dynamic secret counts.
