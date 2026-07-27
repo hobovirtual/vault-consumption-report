@@ -20,6 +20,15 @@ It is designed to be practical and fast to run during customer reporting, troubl
 > [!TIP]
 > Use `--mode utilization` when you need the most reliable dynamic secret counts.
 
+---
+
+## Replication and Interpretation Notes 🔁
+
+> [!WARNING]
+> **Secret counts may be inflated in Performance Replication environments (pre-2.0 only).** Pre-2.0 usage data sums secrets across all clusters — a secret that exists on both a primary and a PR secondary is counted once per cluster. If you are running multiple clusters with Performance Replication, the totals reported here may be higher than your actual consumption. Vault 2.0+ deduplicates secrets across the replication group; upgrading is recommended if this situation applies to your environment.
+
+---
+
 ### At a Glance
 
 | What | Status |
@@ -46,9 +55,10 @@ If you want JSON output:
 ./vault-consumption-report.sh --audit-log /path/to/audit.log --format json
 ```
 
-## ⚠️ Important Disclaimers
+## Important Disclaimers
 
-**This report is a point-in-time capture based on the audit log file you provide.** Usage metrics, peak counts, and trends reflect only the time period covered by that audit log—not necessarily your entire billing period.
+> [!WARNING]
+> This report is a point-in-time capture based on the audit log file you provide.** Usage metrics, peak counts, and trends reflect only the time period covered by that audit log—not necessarily your entire billing period.
 
 ### Data Completeness
 
@@ -332,8 +342,9 @@ When you use `--format json`:
 
 ---
 
-## Important Accuracy Notes ⚠️
+## Important Accuracy Notes
 
+> [!WARNING]
 > 🟨 Heads up: this report is operationally accurate, but not strict real-time telemetry.
 >
 > 🟩 Best dynamic counts come from `--mode utilization`.
@@ -436,18 +447,6 @@ DYNAMIC_SECRETS_PATTERN='^vault_secret_engine_.*_dynamic_role_count(\\{| )' \
 ADP_OPERATIONS_PATTERN='^vault_route_.*_(transit|transform|kms)__count(\\{| )' \
 ./vault-consumption-report.sh --mode prometheus --show-patterns --audit-log ./vault-audit.log
 ```
-
----
-
-## Replication and Interpretation Notes 🔁
-
-> [!WARNING]
-> **Secret counts may be inflated in Performance Replication environments (pre-2.0 only).** Pre-2.0 usage data sums secrets across all clusters — a secret that exists on both a primary and a PR secondary is counted once per cluster. If you are running multiple clusters with Performance Replication, the totals reported here may be higher than your actual consumption. Vault 2.0+ deduplicates secrets across the replication group; upgrading is recommended if this situation applies to your environment.
-
-- For Performance Replication, metrics are billed on the PR primary cluster.
-- When collecting from PR secondary clusters, align interpretation with the relevant team before sharing totals.
-
----
 
 ## Troubleshooting Tips 🛠️
 
